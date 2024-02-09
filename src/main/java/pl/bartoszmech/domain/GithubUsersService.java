@@ -8,12 +8,9 @@ import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +19,7 @@ public class GithubUsersService {
     public IFetcher fetcher;
 
     public List<ClientResponse> findAllRepositoriesByUsername(String username) {
+        long start = System.currentTimeMillis();
         List<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
 
         List<ClientResponse> clientData = new LinkedList<>();
@@ -32,27 +30,22 @@ public class GithubUsersService {
                 .execute(() -> {
                     List<BranchesResponseAPI> repositoryBranches = makeRequestForRepositoryBranches(repository.owner().login(), repository.name());
                     ClientResponse clientResponse = MapperResponseAPI.mapToClientResponse(repository, repositoryBranches);
-                    System.out.println(clientResponse);
                     clientData.add(clientResponse);
                 });
         });
 
+        executorService.shutdown();
         try {
-            executorService.awaitTermination(1, java.util.concurrent.TimeUnit.SECONDS);
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            //
         }
+        System.out.println("Time taken: " + (System.currentTimeMillis() - start) + " ms");
         return clientData;
     }
 
     private List<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {
-        List<RepositoriesResponseAPI> userRepositories = fetcher.fetchRepositories(username);
-
-        if(userRepositories == null) {
-            throw new UserNotFoundException("User with the specified login could not be found");
-        }
-
-        return userRepositories;
+        return fetcher.fetchRepositories(username);
     }
 
     private List<BranchesResponseAPI> makeRequestForRepositoryBranches(String username, String repositoryName) {

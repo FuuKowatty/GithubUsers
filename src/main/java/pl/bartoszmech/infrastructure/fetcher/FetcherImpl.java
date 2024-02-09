@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.IFetcher;
+import pl.bartoszmech.infrastructure.utils.UrlBuilder;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class FetcherImpl implements IFetcher {
 
     private final WebClient webClient;
+    private final UrlBuilder urlBuilder;
 
     @Override
     public List<RepositoriesResponseAPI> fetchRepositories(String login) {

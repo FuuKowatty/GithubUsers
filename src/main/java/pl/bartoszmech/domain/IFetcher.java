@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IFetcher {
 
-    List<RepositoriesResponseAPI> fetchRepositories(String login);
-    List<BranchesResponseAPI> fetchBranches(String login, String repositoryName);
+    List<RepositoriesResponseAPI> fetchRepositories(String username);
+    List<BranchesResponseAPI> fetchBranches(String username, String repositoryName);
 
 }

@@ -20,7 +20,7 @@ public class FetcherImpl implements IFetcher {
         try {
            return webClient
                 .get()
-                .uri("https://api.github.com/users/FuuKowatty/repos")
+                .uri("https://api.github.com/users/" + login + "/repos")
                 .retrieve()
                 .toEntityList(RepositoriesResponseAPI.class)
                 .block()
@@ -32,7 +32,17 @@ public class FetcherImpl implements IFetcher {
 
     @Override
     public List<BranchesResponseAPI> fetchBranches(String login, String repositoryName) {
-        return null;
+        try {
+            return webClient
+                .get()
+                .uri("https://api.github.com/repos/"+login+"/"+repositoryName+"/branches")
+                .retrieve()
+                .toEntityList(BranchesResponseAPI.class)
+                .block()
+                .getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

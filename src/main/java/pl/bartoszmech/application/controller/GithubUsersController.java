@@ -19,7 +19,7 @@ public class GithubUsersController {
 
     @GetMapping("/{username}")
     public List<ClientResponse> findAllRepositoriesByUsername(@PathVariable String username) {
-        return githubUsersService.fetchUserRepositories(username);
+        return githubUsersService.findAllRepositoriesByUsername(username);
     }
 
 }

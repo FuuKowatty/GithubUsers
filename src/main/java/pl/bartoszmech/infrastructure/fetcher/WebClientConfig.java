@@ -1,5 +1,6 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,14 +12,16 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Configuration
+@AllArgsConstructor
 public class WebClientConfig {
+
+    private final WebClientProperties properties;
 
     @Bean
     public WebClient createGithubWebClient() {
-        String GITHUB_API_URL = "https://api.github.com";
         return WebClient.builder()
             .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-            .baseUrl(GITHUB_API_URL)
+            .baseUrl(properties.url())
             .build();
     }
 

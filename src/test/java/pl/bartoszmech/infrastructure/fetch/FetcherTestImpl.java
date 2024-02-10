@@ -3,8 +3,8 @@ package pl.bartoszmech.infrastructure.fetch;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.IFetcher;
+import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +38,13 @@ public class FetcherTestImpl implements IFetcher {
 
 
     @Override
-    public List<RepositoriesResponseAPI> fetchRepositories(String login) {
-        return allRepositories.get(login);
+    public Mono<List<RepositoriesResponseAPI>> fetchRepositories(String login) {
+        return Mono.just(allRepositories.get(login));
     }
 
     @Override
-    public List<BranchesResponseAPI> fetchBranches(String login, String repositoryName) {
-        return allBranches.get(repositoryName);
+    public Mono<List<BranchesResponseAPI>> fetchBranches(String login, String repositoryName) {
+        return Mono.just(allBranches.get(repositoryName));
     }
 
 }

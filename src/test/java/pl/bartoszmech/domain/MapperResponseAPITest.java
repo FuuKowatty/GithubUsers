@@ -18,9 +18,9 @@ public class MapperResponseAPITest {
     public void should_map_to_ClientResponseAPI() {
         //given
         String login = "Login1";
-        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login);
+        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login).block();
         RepositoriesResponseAPI repositoryToFind = repositories.getFirst();
-        List<BranchesResponseAPI> branches = fetcher.fetchBranches(login, repositoryToFind.name());
+        List<BranchesResponseAPI> branches = fetcher.fetchBranches(login, repositoryToFind.name()).block();
 
         //when
         ClientResponse clientResponse = MapperResponseAPI.mapToClientResponse(repositoryToFind, branches);
@@ -35,7 +35,7 @@ public class MapperResponseAPITest {
     public void should_throw_error_if_branches_are_null() {
         //given
         String login = "Login1";
-        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login);
+        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login).block();
         RepositoriesResponseAPI repositoryToFind = repositories.getFirst();
 
         //when
@@ -47,7 +47,7 @@ public class MapperResponseAPITest {
     public void should_throw_error_if_repository_is_null() {
         //given
         String login = "Login1";
-        List<BranchesResponseAPI> branches = fetcher.fetchBranches(login, "Repo1");
+        List<BranchesResponseAPI> branches = fetcher.fetchBranches(login, "Repository 1").block();
 
         //when
         //then
@@ -58,7 +58,7 @@ public class MapperResponseAPITest {
     public void should_throw_error_if_branches_is_empty_array() {
         //given
         String login = "Login1";
-        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login);
+        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login).block();
         RepositoriesResponseAPI repositoryToFind = repositories.getFirst();
 
         //when

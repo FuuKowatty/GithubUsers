@@ -1,7 +1,7 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -22,27 +22,23 @@ public class FetcherImpl implements IFetcher {
     private final URIBuilder uriBuilder;
 
     @Override
-    public List<RepositoriesResponseAPI> fetchRepositories(String login) {
+    public Mono<List<RepositoriesResponseAPI>> fetchRepositories(String login) {
            return githubWebClient
                 .get()
                 .uri(uriBuilder.buildRepositoryUrl(login))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .toEntityList(RepositoriesResponseAPI.class)
-                .block()
-                .getBody();
+                .bodyToMono(new ParameterizedTypeReference<List<RepositoriesResponseAPI>> () {});
     }
 
     @Override
-    public List<BranchesResponseAPI> fetchBranches(String login, String repositoryName) {
+    public Mono<List<BranchesResponseAPI>> fetchBranches(String login, String repositoryName) {
             return githubWebClient
                 .get()
                 .uri(uriBuilder.buildBranchesUrl(login, repositoryName))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .toEntityList(BranchesResponseAPI.class)
-                .block()
-                .getBody();
+                .bodyToMono(new ParameterizedTypeReference<List<BranchesResponseAPI>> () {});
     }
 
     private Mono<? extends Throwable> handleError(ClientResponse response) {

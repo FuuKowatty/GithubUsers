@@ -1,4 +1,4 @@
-package pl.bartoszmech.domain;
+package pl.bartoszmech.infrastructure.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 

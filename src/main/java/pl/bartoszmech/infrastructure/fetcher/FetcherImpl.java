@@ -10,6 +10,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.IFetcher;
+import pl.bartoszmech.infrastructure.exceptions.ExternalAPIException;
+import pl.bartoszmech.infrastructure.exceptions.UserNotFoundException;
 import pl.bartoszmech.infrastructure.utils.URIBuilder;
 import reactor.core.publisher.Mono;
 
@@ -47,7 +49,7 @@ public class FetcherImpl implements IFetcher {
         return switch (response.statusCode().value()) {
             case 400 -> Mono.error(new ExternalAPIException(400, "Bad request made"));
             case 403 -> Mono.error(new ExternalAPIException(403, "Limit from external API was exceed"));
-            case 404 -> Mono.error(new ExternalAPIException(404, "Resource not found"));
+            case 404 -> Mono.error(new UserNotFoundException("Resource not found"));
             case 500 -> Mono.error(new ExternalAPIException(500, "Server error"));
             default -> Mono.error(new RuntimeException("Something went wrong"));
         };

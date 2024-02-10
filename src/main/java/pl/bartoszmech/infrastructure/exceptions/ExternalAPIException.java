@@ -1,4 +1,4 @@
-package pl.bartoszmech.infrastructure.fetcher;
+package pl.bartoszmech.infrastructure.exceptions;
 
 public class ExternalAPIException extends RuntimeException {
 

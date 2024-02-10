@@ -1,7 +1,5 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.IFetcher;
@@ -9,8 +7,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Profile("dev")
-@Component
 public class DumbWebClient implements IFetcher {
 
     @Override

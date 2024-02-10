@@ -1,10 +1,8 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
@@ -17,8 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Profile("!dev")
-@Component
 @AllArgsConstructor
 public class FetcherImpl implements IFetcher {
 

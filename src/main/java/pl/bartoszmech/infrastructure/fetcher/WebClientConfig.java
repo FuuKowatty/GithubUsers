@@ -10,9 +10,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class WebClientConfig {
 
     @Bean
-    public WebClient createWebClient() {
+    public WebClient createGithubWebClient() {
+        String GITHUB_API_URL = "https://api.github.com";
         return WebClient.builder()
             .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .baseUrl(GITHUB_API_URL)
             .build();
     }
 

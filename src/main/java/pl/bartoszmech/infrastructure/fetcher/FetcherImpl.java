@@ -1,12 +1,16 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
 import lombok.AllArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.IFetcher;
-import pl.bartoszmech.infrastructure.utils.UrlBuilder;
+import pl.bartoszmech.infrastructure.utils.URIBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -14,37 +18,41 @@ import java.util.List;
 @AllArgsConstructor
 public class FetcherImpl implements IFetcher {
 
-    private final WebClient webClient;
-    private final UrlBuilder urlBuilder;
+    private final WebClient githubWebClient;
+    private final URIBuilder uriBuilder;
 
     @Override
     public List<RepositoriesResponseAPI> fetchRepositories(String login) {
-        try {
-           return webClient
+           return githubWebClient
                 .get()
-                .uri("https://api.github.com/users/" + login + "/repos")
+                .uri(uriBuilder.buildRepositoryUrl(login))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
                 .toEntityList(RepositoriesResponseAPI.class)
                 .block()
-               .getBody();
-        } catch (Exception e) {
-            return null;
-        }
+                .getBody();
     }
 
     @Override
     public List<BranchesResponseAPI> fetchBranches(String login, String repositoryName) {
-        try {
-            return webClient
+            return githubWebClient
                 .get()
-                .uri("https://api.github.com/repos/"+login+"/"+repositoryName+"/branches")
+                .uri(uriBuilder.buildBranchesUrl(login, repositoryName))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
                 .toEntityList(BranchesResponseAPI.class)
                 .block()
                 .getBody();
-        } catch (Exception e) {
-            return null;
-        }
+    }
+
+    private Mono<? extends Throwable> handleError(ClientResponse response) {
+        return switch (response.statusCode().value()) {
+            case 400 -> Mono.error(new ExternalAPIException(400, "Bad request made"));
+            case 403 -> Mono.error(new ExternalAPIException(403, "Limit from external API was exceed"));
+            case 404 -> Mono.error(new ExternalAPIException(404, "Resource not found"));
+            case 500 -> Mono.error(new ExternalAPIException(500, "Server error"));
+            default -> Mono.error(new RuntimeException("Something went wrong"));
+        };
     }
 
 }

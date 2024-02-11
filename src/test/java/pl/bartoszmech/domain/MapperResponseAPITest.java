@@ -3,10 +3,9 @@ package pl.bartoszmech.domain;
 import org.junit.jupiter.api.Test;
 import pl.bartoszmech.infrastructure.fetch.FetcherTestImpl;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
-import pl.bartoszmech.application.response.ClientResponse;
+import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,12 +24,12 @@ public class MapperResponseAPITest {
         List<BranchesResponseAPI> branches = fetcher.fetchBranches(login, repositoryToFind.name()).block();
 
         //when
-        ClientResponse clientResponse = MapperResponseAPI.mapToClientResponse(repositoryToFind, branches);
+        GithubUsersResponse githubUsersResponse = MapperResponseAPI.mapToClientResponse(repositoryToFind, branches);
 
         //then
-        assertThat(login).isEqualTo(clientResponse.ownerLogin());
-        assertThat(repositoryToFind.name()).isEqualTo(clientResponse.repositoryName());
-        assertThat(branches.size()).isEqualTo(clientResponse.branches().size());
+        assertThat(login).isEqualTo(githubUsersResponse.ownerLogin());
+        assertThat(repositoryToFind.name()).isEqualTo(githubUsersResponse.repositoryName());
+        assertThat(branches.size()).isEqualTo(githubUsersResponse.branches().size());
     }
 
     @Test

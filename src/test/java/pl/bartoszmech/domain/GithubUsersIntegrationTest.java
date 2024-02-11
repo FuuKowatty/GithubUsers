@@ -6,7 +6,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import pl.bartoszmech.BaseIntegrationTest;
 import pl.bartoszmech.SampleAPIBody;
-import pl.bartoszmech.application.response.ClientResponse;
+import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.application.response.ErrorResponseExternalAPI;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
         stubBranchesForRepository("Owner3", "Repository3", new String[]{"branch5", "branch6"});
 
         // when
-        List<ClientResponse> clientResponses = webTestClient
+        List<GithubUsersResponse> githubUsersRespons = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -43,23 +43,23 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
         // then
             .expectStatus().isOk()
-            .expectBodyList(ClientResponse.class).hasSize(3)
+            .expectBodyList(GithubUsersResponse.class).hasSize(3)
             .returnResult()
             .getResponseBody();
 
-        assertThat(clientResponses).extracting("ownerLogin", "repositoryName", "branches")
+        assertThat(githubUsersRespons).extracting("ownerLogin", "repositoryName", "branches")
             .containsExactlyInAnyOrder(
                 tuple("Owner1", "Repository1", Arrays.asList(
-                    new ClientResponse.Branch("branch1", "sha0"),
-                    new ClientResponse.Branch("branch2", "sha1")
+                    new GithubUsersResponse.Branch("branch1", "sha0"),
+                    new GithubUsersResponse.Branch("branch2", "sha1")
                 )),
                 tuple("Owner2", "Repository2", Arrays.asList(
-                        new ClientResponse.Branch("branch3", "sha0"),
-                    new ClientResponse.Branch("branch4", "sha1")
+                        new GithubUsersResponse.Branch("branch3", "sha0"),
+                    new GithubUsersResponse.Branch("branch4", "sha1")
                 )),
                 tuple("Owner3", "Repository3", Arrays.asList(
-                        new ClientResponse.Branch("branch5", "sha0"),
-                    new ClientResponse.Branch("branch6", "sha1")
+                        new GithubUsersResponse.Branch("branch5", "sha0"),
+                    new GithubUsersResponse.Branch("branch6", "sha1")
                 ))
             );
     }

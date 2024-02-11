@@ -3,7 +3,7 @@ package pl.bartoszmech.domain;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
-import pl.bartoszmech.application.response.ClientResponse;
+import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 
 import java.util.List;
@@ -16,11 +16,11 @@ public class GithubUsersService {
 
     public IFetcher fetcher;
 
-    public List<ClientResponse> findAllRepositoriesByUsername(String username) {
+    public List<GithubUsersResponse> findAllRepositoriesByUsername(String username) {
         List<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
         ExecutorService executorService = Executors.newCachedThreadPool();
 
-        List<ClientResponse> clientResponses = userRepositories
+        List<GithubUsersResponse> githubUsersRespons = userRepositories
             .stream()
             .map(repo -> CompletableFuture.supplyAsync(() -> {
                 List<BranchesResponseAPI> repositoryBranches = makeRequestForRepositoryBranches(repo.owner().login(), repo.name());
@@ -32,7 +32,7 @@ public class GithubUsersService {
             .toList();
 
         executorService.shutdown();
-        return clientResponses;
+        return githubUsersRespons;
     }
 
     private List<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {

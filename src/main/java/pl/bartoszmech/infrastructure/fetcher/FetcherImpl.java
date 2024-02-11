@@ -43,11 +43,10 @@ public class FetcherImpl implements IFetcher {
 
     private Mono<? extends Throwable> handleError(ClientResponse response) {
         return switch (response.statusCode().value()) {
-            case 400 -> Mono.error(new ExternalAPIException(400, "Bad request made"));
             case 403 -> Mono.error(new ExternalAPIException(403, "Limit from external API was exceed"));
-            case 404 -> Mono.error(new UserNotFoundException("Resource not found"));
-            case 500 -> Mono.error(new ExternalAPIException(500, "Server error"));
-            default -> Mono.error(new RuntimeException("Something went wrong"));
+            case 404 -> Mono.error(new UserNotFoundException("User not found"));
+            case 500 -> Mono.error(new ExternalAPIException(500, "External server error"));
+            default -> Mono.error(new ExternalAPIException(response.statusCode().value(), "Something went wrong while fetching data"));
         };
     }
 

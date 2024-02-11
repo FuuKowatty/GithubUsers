@@ -8,4 +8,5 @@ public class ExternalAPIException extends RuntimeException {
         super(message);
         this.statusCode = statusCode;
     }
+
 }

@@ -1,14 +1,16 @@
 package pl.bartoszmech.domain;
 
-import pl.bartoszmech.infrastructure.fetch.FetcherTestImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pl.bartoszmech.infrastructure.fetch.FetcherTestImpl;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.ClientResponse;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MapperResponseAPITest {
 
@@ -26,9 +28,9 @@ public class MapperResponseAPITest {
         ClientResponse clientResponse = MapperResponseAPI.mapToClientResponse(repositoryToFind, branches);
 
         //then
-        Assertions.assertEquals(login, clientResponse.ownerLogin());
-        Assertions.assertEquals(repositoryToFind.name(), clientResponse.repositoryName());
-        Assertions.assertEquals(branches.size(), clientResponse.branches().size());
+        assertThat(login).isEqualTo(clientResponse.ownerLogin());
+        assertThat(repositoryToFind.name()).isEqualTo(clientResponse.repositoryName());
+        assertThat(branches.size()).isEqualTo(clientResponse.branches().size());
     }
 
     @Test
@@ -40,7 +42,7 @@ public class MapperResponseAPITest {
 
         //when
         //then
-        Assertions.assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(repositoryToFind, null));
+        assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(repositoryToFind, null));
     }
 
     @Test
@@ -51,7 +53,7 @@ public class MapperResponseAPITest {
 
         //when
         //then
-        Assertions.assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(null, branches));
+        assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(null, branches));
     }
 
     @Test
@@ -63,7 +65,7 @@ public class MapperResponseAPITest {
 
         //when
         //then
-        Assertions.assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(repositoryToFind, Collections.emptyList()));
+        assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(repositoryToFind, Collections.emptyList()));
     }
 
 }

@@ -1,6 +1,6 @@
 package pl.bartoszmech.application.response;
 
-public record ErrorResponseExternalAPI(
+public record ErrorResponse(
         Integer statusCode,
         String message
 ) {}

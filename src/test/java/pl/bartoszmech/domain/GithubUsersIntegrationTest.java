@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import pl.bartoszmech.BaseIntegrationTest;
 import pl.bartoszmech.SampleAPIBody;
 import pl.bartoszmech.application.response.GithubUsersResponse;
-import pl.bartoszmech.application.response.ErrorResponseExternalAPI;
+import pl.bartoszmech.application.response.ErrorResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +74,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
                 .withBody(bodyWithThreeRepositoriesJson())));
 
         // when
-        ErrorResponseExternalAPI errorResponse = webTestClient
+        ErrorResponse errorResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -82,7 +82,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
         // then
             .expectStatus().isForbidden()
-            .expectBody(ErrorResponseExternalAPI.class)
+            .expectBody(ErrorResponse.class)
             .returnResult()
             .getResponseBody();
 
@@ -107,7 +107,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
         stubBranchesForRepository("Owner3", "Repository3", new String[]{"branch5", "branch6"});
 
         // when
-        ErrorResponseExternalAPI errorResponse = webTestClient
+        ErrorResponse errorResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -115,7 +115,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
             // then
             .expectStatus().isForbidden()
-            .expectBody(ErrorResponseExternalAPI.class)
+            .expectBody(ErrorResponse.class)
             .returnResult()
             .getResponseBody();
 
@@ -132,7 +132,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
                 .withHeader("Content-Type", APPLICATION_JSON)));
 
         // when
-        ErrorResponseExternalAPI errorResponse = webTestClient
+        ErrorResponse errorResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -140,7 +140,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
             // then
             .expectStatus().isNotFound()
-            .expectBody(ErrorResponseExternalAPI.class)
+            .expectBody(ErrorResponse.class)
             .returnResult()
             .getResponseBody();
 
@@ -157,7 +157,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
                 .withHeader("Content-Type", APPLICATION_JSON)));
 
         // when
-        ErrorResponseExternalAPI errorResponse = webTestClient
+        ErrorResponse errorResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -165,7 +165,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
             // then
             .expectStatus().is5xxServerError()
-            .expectBody(ErrorResponseExternalAPI.class)
+            .expectBody(ErrorResponse.class)
             .returnResult()
             .getResponseBody();
 
@@ -183,7 +183,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
                 .withHeader("Content-Type", APPLICATION_JSON)));
 
         // when
-        ErrorResponseExternalAPI errorResponse = webTestClient
+        ErrorResponse errorResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -191,7 +191,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
 
             // then
             .expectStatus().is5xxServerError()
-            .expectBody(ErrorResponseExternalAPI.class)
+            .expectBody(ErrorResponse.class)
             .returnResult()
             .getResponseBody();
 

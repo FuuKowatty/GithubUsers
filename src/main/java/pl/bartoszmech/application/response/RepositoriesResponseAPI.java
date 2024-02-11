@@ -1,10 +1,8 @@
 package pl.bartoszmech.application.response;
 
 public record RepositoriesResponseAPI(
-
     String name,
     Owner owner
-
 ) {
 
     public record Owner(

@@ -4,5 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(value = "fetcher")
 public record WebClientProperties(
-    String url
+    String url,
+    Integer connectionTimeout,
+    Integer readTimeout
 ) {}

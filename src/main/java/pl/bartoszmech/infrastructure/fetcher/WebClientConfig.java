@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.bartoszmech.domain.IFetcher;
 import pl.bartoszmech.infrastructure.utils.URIBuilder;
@@ -37,11 +38,12 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient createGithubWebClient() {
+    public WebClient createGithubWebClient(ErrorHandlingFilter filter) {
         return WebClient.builder()
             .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .baseUrl(properties.url())
             .clientConnector(new ReactorClientHttpConnector(getHttpClient()))
+            .filter(filter)
             .build();
     }
 

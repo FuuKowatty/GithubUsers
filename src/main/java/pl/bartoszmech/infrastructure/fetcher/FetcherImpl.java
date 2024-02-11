@@ -27,7 +27,6 @@ public class FetcherImpl implements IFetcher {
                 .get()
                 .uri(uriBuilder.buildRepositoryUrl(login))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, this::handleError)
                 .bodyToMono(new ParameterizedTypeReference<List<RepositoriesResponseAPI>> () {});
     }
 
@@ -37,17 +36,7 @@ public class FetcherImpl implements IFetcher {
                 .get()
                 .uri(uriBuilder.buildBranchesUrl(login, repositoryName))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, this::handleError)
                 .bodyToMono(new ParameterizedTypeReference<List<BranchesResponseAPI>> () {});
-    }
-
-    private Mono<? extends Throwable> handleError(ClientResponse response) {
-        return switch (response.statusCode().value()) {
-            case 403 -> Mono.error(new ExternalAPIException(403, "Limit from external API was exceed"));
-            case 404 -> Mono.error(new UserNotFoundException("User not found"));
-            case 500 -> Mono.error(new ExternalAPIException(500, "External server error"));
-            default -> Mono.error(new ExternalAPIException(response.statusCode().value(), "Something went wrong while fetching data"));
-        };
     }
 
 }

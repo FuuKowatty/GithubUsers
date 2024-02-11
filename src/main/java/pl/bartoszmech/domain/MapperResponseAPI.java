@@ -9,11 +9,6 @@ import java.util.List;
 class MapperResponseAPI {
 
     static ClientResponse mapToClientResponse(RepositoriesResponseAPI repository, List<BranchesResponseAPI> branches) {
-
-        if(branches.isEmpty()) {
-            throw new NullPointerException("Each repository must have at least one branch");
-        }
-
         return new ClientResponse(
             repository.name(),
             repository.owner().login(),

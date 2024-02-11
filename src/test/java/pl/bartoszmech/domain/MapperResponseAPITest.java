@@ -56,16 +56,4 @@ public class MapperResponseAPITest {
         assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(null, branches));
     }
 
-    @Test
-    public void should_throw_error_if_branches_is_empty_array() {
-        //given
-        String login = "Login1";
-        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(login).block();
-        RepositoriesResponseAPI repositoryToFind = repositories.getFirst();
-
-        //when
-        //then
-        assertThrows(NullPointerException.class, () -> MapperResponseAPI.mapToClientResponse(repositoryToFind, Collections.emptyList()));
-    }
-
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 @Service
 @AllArgsConstructor
 public class GithubUsersService {
@@ -20,7 +21,7 @@ public class GithubUsersService {
         List<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
         ExecutorService executorService = Executors.newCachedThreadPool();
 
-        List<GithubUsersResponse> githubUsersRespons = userRepositories
+        List<GithubUsersResponse> githubUsersResponse = userRepositories
             .stream()
             .map(repo -> CompletableFuture.supplyAsync(() -> {
                 List<BranchesResponseAPI> repositoryBranches = makeRequestForRepositoryBranches(repo.owner().login(), repo.name());
@@ -32,7 +33,7 @@ public class GithubUsersService {
             .toList();
 
         executorService.shutdown();
-        return githubUsersRespons;
+        return githubUsersResponse;
     }
 
     private List<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {

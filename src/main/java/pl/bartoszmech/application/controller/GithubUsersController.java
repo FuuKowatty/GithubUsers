@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,8 @@ import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.domain.GithubUsersService;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
@@ -40,8 +44,9 @@ public class GithubUsersController {
                 schema = @Schema(implementation = ErrorResponseExternalAPI.class))),
     })
     @GetMapping("/{username}")
-    public List<GithubUsersResponse> findAllRepositoriesByUsername(@PathVariable String username) {
-        return githubUsersService.findAllRepositoriesByUsername(username);
+    @Cacheable(value = "githubUsers", key = "#username",unless="#result.getStatusCodeValue() != 200")
+    public ResponseEntity<List<GithubUsersResponse>> findAllRepositoriesByUsername(@PathVariable String username) {
+        return ResponseEntity.status(OK).body(githubUsersService.findAllRepositoriesByUsername(username));
     }
 
 }

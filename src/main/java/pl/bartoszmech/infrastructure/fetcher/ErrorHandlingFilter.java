@@ -1,5 +1,6 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -10,6 +11,7 @@ import pl.bartoszmech.infrastructure.exceptions.UserNotFoundException;
 import reactor.core.publisher.Mono;
 
 @Component
+@Log4j2
 public class ErrorHandlingFilter implements ExchangeFilterFunction {
 
     @Override
@@ -27,6 +29,7 @@ public class ErrorHandlingFilter implements ExchangeFilterFunction {
                 }
 
                 return Mono.just(response);
-            });
+            })
+            .doOnError(response -> log.error("Error handled by filter with message {}", response.getMessage()));
     }
 }

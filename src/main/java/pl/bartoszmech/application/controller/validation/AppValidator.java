@@ -1,5 +1,6 @@
 package pl.bartoszmech.application.controller.validation;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import pl.bartoszmech.infrastructure.exceptions.UsernameValidationException;
 
@@ -16,13 +17,16 @@ import static pl.bartoszmech.application.controller.validation.UsernameValidatio
 import static pl.bartoszmech.application.controller.validation.UsernameValidationResult.STARTS_WITH_HYPHEN;
 
 @Service
+@Log4j2
 public class AppValidator {
 
     private List<UsernameValidationResult> errors;
 
     public void validateGithubUsername(String username) {
         if(!isValidUsername(username)) {
-            throw new UsernameValidationException(getAllErrorMessages());
+            String errors = getAllErrorMessages();
+            log.error("Github username validation failed. Errors: " + errors);
+            throw new UsernameValidationException(errors);
         }
     }
 

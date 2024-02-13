@@ -41,7 +41,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
             .accept()
             .exchange()
 
-        // then
+            // then
             .expectStatus().isOk()
             .expectBodyList(GithubUsersResponse.class).hasSize(3)
             .returnResult()
@@ -54,11 +54,11 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
                     new GithubUsersResponse.Branch("branch2", "sha1")
                 )),
                 tuple("Owner2", "Repository2", Arrays.asList(
-                        new GithubUsersResponse.Branch("branch3", "sha0"),
+                    new GithubUsersResponse.Branch("branch3", "sha0"),
                     new GithubUsersResponse.Branch("branch4", "sha1")
                 )),
                 tuple("Owner3", "Repository3", Arrays.asList(
-                        new GithubUsersResponse.Branch("branch5", "sha0"),
+                    new GithubUsersResponse.Branch("branch5", "sha0"),
                     new GithubUsersResponse.Branch("branch6", "sha1")
                 ))
             );

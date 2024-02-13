@@ -36,7 +36,6 @@ public class FetcherTestImpl implements IFetcher {
             )
     );
 
-
     @Override
     public Mono<List<RepositoriesResponseAPI>> fetchRepositories(String login) {
         return Mono.just(allRepositories.get(login));

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
-import pl.bartoszmech.infrastructure.exceptions.ExternalAPIException;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,11 +17,11 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 public class GithubUsersService {
 
-    public IFetcher fetcher;
+    public IGithubClient fetcher;
 
     public List<GithubUsersResponse> findAllRepositoriesByUsername(String username) {
         List<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
-        try (var executorService = Executors.newCachedThreadPool()) {
+        try (var executorService = Executors.newVirtualThreadPerTaskExecutor()) {
             return userRepositories
                 .stream()
                 .map(repo -> fetchBranchesAsync(executorService, repo))
@@ -34,41 +33,38 @@ public class GithubUsersService {
     }
 
     private CompletableFuture<GithubUsersResponse> fetchBranchesAsync(ExecutorService executor, RepositoriesResponseAPI repo) {
-        return CompletableFuture.supplyAsync(() -> {
-                List<BranchesResponseAPI> branches = makeRequestForRepositoryBranches(repo.owner().login(), repo.name());
-                return MapperResponseAPI.mapToClientResponse(repo, branches);}, executor);
+        return CompletableFuture.supplyAsync(() -> makeRequestForRepositoryBranches(repo.owner().login(), repo.name()), executor)
+            .thenApply(branches -> mergeAPIResponse(repo, branches));
     }
 
     private List<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {
         log.info("Making request to fetch repositories for user: {}", username);
-        List<RepositoriesResponseAPI> repositories = fetcher.fetchRepositories(username).block();
-
-        if(repositories == null) {
-            String message = "Error while fetching repositories for user: " + username;
-            log.error(message);
-            throw new ExternalAPIException(500, message);
-        }
-
+        List<RepositoriesResponseAPI> repositories = filterReposByForks(fetcher.fetchRepositories(username));
         log.info("Received {} repositories for user: {}", repositories.size(), username);
         return repositories;
     }
 
     private List<BranchesResponseAPI> makeRequestForRepositoryBranches(String username, String repositoryName) {
-        log.info("Making request to fetch branches for repository: {}/{} on thread {}", username, repositoryName, getCurrentThreadName());
-        List<BranchesResponseAPI> branches = fetcher.fetchBranches(username, repositoryName).block();
-
-        if(branches == null || branches.isEmpty()) {
-            String message = "Error while fetching branches for repository: " + username + "/" + repositoryName;
-            log.error(message);
-            throw new ExternalAPIException(500, message);
-        }
-
-        log.info("Received {} branches for repository: {}/{} on thread {}", branches.size(), username, repositoryName, getCurrentThreadName());
+        log.info("Making request to fetch branches for repository: {}/{}", username, repositoryName);
+        List<BranchesResponseAPI> branches = fetcher.fetchBranches(username, repositoryName);
+        log.info("Received {} branches for repository: {}/{}", branches.size(), username, repositoryName);
         return branches;
     }
 
-    private static String getCurrentThreadName() {
-        return Thread.currentThread().getName();
+    private List<RepositoriesResponseAPI> filterReposByForks(List<RepositoriesResponseAPI> repositories) {
+        return repositories.stream().filter(repo -> !repo.fork()).toList();
+    }
+
+    private GithubUsersResponse mergeAPIResponse(RepositoriesResponseAPI repository, List<BranchesResponseAPI> branches) {
+        return new GithubUsersResponse(
+            repository.name(),
+            repository.owner().login(),
+            branches.stream()
+                .map(branch -> new GithubUsersResponse.Branch(
+                    branch.name(),
+                    branch.commit().sha()))
+                .toList()
+        );
     }
 
 }

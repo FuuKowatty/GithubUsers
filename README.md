@@ -27,23 +27,8 @@ mvn spring-boot:run
 
 
 ### /api/users/{github_username}
-If you make **GET** request on **http://localhost:8080/api/users/{username}** you will receive 200 (OK) status only if
-username is valid
+If you make **GET** request on **http://localhost:8080/api/users/{username}** operation will be success only if username is valid
 
-#### Username Validation
-Criteria of github_username are based on https://github.com/shinnn/github-username-regex and contains:
-1. Username cannot be empty or null.
-2. String requires length between 1 and 39.
-3. String requires characters which matches "^[a-zA-Z0-9-]+$" regex.
-4. Username cannot start with and end with hyphen ("-"), and cannot contain double hyphen ("--").
-
-If any of this rules will be broke application will return **ErrorResponse.java** after JSON serialization which may looks like:
-```json
-{
-  "statusCode": 0,
-  "message": "string"
-}
-```
 
 #### Success Operation
 If you provided valid username and API limit is not exceed you will get a List of **GithubUsersResponse.java** after JSON serialization
@@ -64,32 +49,22 @@ which may looks like:
 ]
 ```
 
-### Errors&Limitations
-#### Api restrictions
-Unlikely github api have limitations, especially if you are not authorized you will GET max 30results about user's repositories.
-Github API can proceed limited requested on IP during one hour, so I prefer to use **dev profile** for developing which
-will response you with raw data.
-
-If you exceed limit API during fetching data, application will throw Exception and return valid message with **403** status.
-
 #### Username not found
-If your username will be valid, but it does not exist application will return you **404** status and valid message.
+If your username will be valid, but it does not exist application will return you **404** status and message.
+```json
+{
+  "statusCode": 404,
+  "message": "User not found"
+}
+```
 
-<br/>
-
-**You can check fully described endpoint with all responses on http://localhost:8080/swagger-ui/index.html#/github-users-controller/findAllRepositoriesByUsername**
 
 ## Technologies
 - java - 21
 - Lombok - 1.18.30
-- Spring Boot - 3.1.6
+- Spring Boot - 3.2.1
 - Spring Boot Starter Web
 - Spring Boot Starter Webflux
-- Spring Boot Starter Validation - 3.2.0
 - Spring Boot Starter Test
 - WireMock - 3.3.1
 - AssertJ Core - 3.8.0
-- Spring Boot Configuration Processor (Properties)
-- Springdoc OpenAPI Starter Webmvc UI - 2.3.0
-- Spring Boot Starter Cache
-- Caffeine (Caching) - 3.1.5

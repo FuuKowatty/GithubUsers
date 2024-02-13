@@ -89,6 +89,7 @@ If your username will be valid, but it does not exist application will return yo
 - Spring Boot Starter Test
 - WireMock - 3.3.1
 - AssertJ Core - 3.8.0
-- Spring Boot Configuration Processor
+- Spring Boot Configuration Processor (Properties)
 - Springdoc OpenAPI Starter Webmvc UI - 2.3.0
 - Spring Boot Starter Cache
+- Caffeine (Caching) - 3.1.5

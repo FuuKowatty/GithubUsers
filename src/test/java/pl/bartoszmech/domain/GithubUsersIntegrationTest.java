@@ -16,7 +16,7 @@ import static org.apache.hc.core5.http.HttpStatus.SC_FORBIDDEN;
 import static org.apache.hc.core5.http.HttpStatus.SC_OK;
 import static com.github.tomakehurst.wiremock.common.ContentTypes.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;;
+import static org.assertj.core.api.Assertions.tuple;
 
 
 public class GithubUsersIntegrationTest extends BaseIntegrationTest implements SampleAPIBody {
@@ -35,7 +35,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
         stubBranchesForRepository("Owner3", "Repository3", new String[]{"branch5", "branch6"});
 
         // when
-        List<GithubUsersResponse> githubUsersRespons = webTestClient
+        List<GithubUsersResponse> githubUsersResponse = webTestClient
             .get()
             .uri("/api/users/username")
             .accept()
@@ -47,7 +47,7 @@ public class GithubUsersIntegrationTest extends BaseIntegrationTest implements S
             .returnResult()
             .getResponseBody();
 
-        assertThat(githubUsersRespons).extracting("ownerLogin", "repositoryName", "branches")
+        assertThat(githubUsersResponse).extracting("ownerLogin", "repositoryName", "branches")
             .containsExactlyInAnyOrder(
                 tuple("Owner1", "Repository1", Arrays.asList(
                     new GithubUsersResponse.Branch("branch1", "sha0"),

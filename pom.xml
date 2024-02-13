@@ -22,6 +22,7 @@
         <wiremock.version>3.3.1</wiremock.version>
         <assertj-core.version>3.8.0</assertj-core.version>
         <spring-boot-starter-validation.version>3.2.0</spring-boot-starter-validation.version>
+        <caffeine.version>3.1.5</caffeine.version>
     </properties>
     <dependencies>
 <!--        LOMBOK-->
@@ -79,6 +80,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
         </dependency>
     </dependencies>
 

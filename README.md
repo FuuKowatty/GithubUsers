@@ -4,6 +4,21 @@
 
 By providing username you can get data about **login**, **repositories** and each repository **branches**.
 
+## Running Application
+If you want to run the application locally you can follow these steps:
+1. clone repository 
+```shell
+git clone https://github.com/FuuKowatty/GithubUsers.git
+```
+2. Go to project directory
+```shell
+cd GithubUsers
+```
+3. You can simply run application by
+```shell
+mvn spring-boot:run
+```
+
 ## API Endpoints
 
 | Endpoint              | Method | Request                            | Response                           | Function                                    |
@@ -63,3 +78,17 @@ If your username will be valid, but it does not exist application will return yo
 <br/>
 
 **You can check fully described endpoint with all responses on http://localhost:8080/swagger-ui/index.html#/github-users-controller/findAllRepositoriesByUsername**
+
+## Technologies
+- java - 21
+- Lombok - 1.18.30
+- Spring Boot - 3.1.6
+- Spring Boot Starter Web
+- Spring Boot Starter Webflux
+- Spring Boot Starter Validation - 3.2.0
+- Spring Boot Starter Test
+- WireMock - 3.3.1
+- AssertJ Core - 3.8.0
+- Spring Boot Configuration Processor
+- Springdoc OpenAPI Starter Webmvc UI - 2.3.0
+- Spring Boot Starter Cache

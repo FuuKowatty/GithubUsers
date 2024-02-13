@@ -2,6 +2,7 @@ package pl.bartoszmech.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.GithubUsersResponse;
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-@Log4j2
+@Slf4j
 @AllArgsConstructor
 public class GithubUsersService {
 
@@ -22,21 +23,21 @@ public class GithubUsersService {
 
     public List<GithubUsersResponse> findAllRepositoriesByUsername(String username) {
         List<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        try (var executorService = Executors.newCachedThreadPool()) {
+            return userRepositories
+                .stream()
+                .map(repo -> fetchBranchesAsync(executorService, repo))
+                .toList()
+                .stream()
+                .map(CompletableFuture::join)
+                .toList();
+        }
+    }
 
-        List<GithubUsersResponse> githubUsersResponse = userRepositories
-            .stream()
-            .map(repo -> CompletableFuture.supplyAsync(() -> {
-                List<BranchesResponseAPI> repositoryBranches = makeRequestForRepositoryBranches(repo.owner().login(), repo.name());
-                return MapperResponseAPI.mapToClientResponse(repo, repositoryBranches);
-            }, executorService))
-            .toList()
-            .stream()
-            .map(CompletableFuture::join)
-            .toList();
-
-        executorService.shutdown();
-        return githubUsersResponse;
+    private CompletableFuture<GithubUsersResponse> fetchBranchesAsync(ExecutorService executor, RepositoriesResponseAPI repo) {
+        return CompletableFuture.supplyAsync(() -> {
+                List<BranchesResponseAPI> branches = makeRequestForRepositoryBranches(repo.owner().login(), repo.name());
+                return MapperResponseAPI.mapToClientResponse(repo, branches);}, executor);
     }
 
     private List<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {
@@ -57,7 +58,7 @@ public class GithubUsersService {
         log.info("Making request to fetch branches for repository: {}/{} on thread {}", username, repositoryName, getCurrentThreadName());
         List<BranchesResponseAPI> branches = fetcher.fetchBranches(username, repositoryName).block();
 
-        if(branches == null) {
+        if(branches == null || branches.isEmpty()) {
             String message = "Error while fetching branches for repository: " + username + "/" + repositoryName;
             log.error(message);
             throw new ExternalAPIException(500, message);

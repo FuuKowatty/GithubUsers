@@ -1,6 +1,7 @@
 package pl.bartoszmech.application.controller.validation;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartoszmech.infrastructure.exceptions.UsernameValidationException;
 
@@ -17,7 +18,7 @@ import static pl.bartoszmech.application.controller.validation.UsernameValidatio
 import static pl.bartoszmech.application.controller.validation.UsernameValidationResult.STARTS_WITH_HYPHEN;
 
 @Service
-@Log4j2
+@Slf4j
 public class AppValidator {
 
     private List<UsernameValidationResult> errors;

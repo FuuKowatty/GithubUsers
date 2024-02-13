@@ -64,7 +64,7 @@ which may looks like:
 ]
 ```
 
-#### Errors&Limitations
+### Errors&Limitations
 #### Api restrictions
 Unlikely github api have limitations, especially if you are not authorized you will GET max 30results about user's repositories.
 Github API can proceed limited requested on IP during one hour, so I prefer to use **dev profile** for developing which

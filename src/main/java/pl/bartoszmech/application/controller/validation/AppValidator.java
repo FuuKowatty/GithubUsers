@@ -1,11 +1,9 @@
 package pl.bartoszmech.application.controller.validation;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.bartoszmech.infrastructure.exceptions.UsernameValidationException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

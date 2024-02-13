@@ -1,6 +1,5 @@
 package pl.bartoszmech.infrastructure.fetcher;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -33,4 +32,5 @@ public class ErrorHandlingFilter implements ExchangeFilterFunction {
             })
             .doOnError(response -> log.error("Error handled by filter with message {}", response.getMessage()));
     }
+
 }

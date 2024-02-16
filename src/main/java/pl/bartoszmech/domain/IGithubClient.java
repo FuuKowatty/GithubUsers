@@ -2,12 +2,11 @@ package pl.bartoszmech.domain;
 
 import pl.bartoszmech.application.response.BranchesResponseAPI;
 import pl.bartoszmech.application.response.RepositoriesResponseAPI;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface IGithubClient {
 
-    List<RepositoriesResponseAPI> fetchRepositories(String username);
-    List<BranchesResponseAPI> fetchBranches(String username, String repositoryName);
+    Flux<RepositoriesResponseAPI> fetchRepositories(String username);
+    Flux<BranchesResponseAPI> fetchBranches(String username, String repositoryName);
 
 }

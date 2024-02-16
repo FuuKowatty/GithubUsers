@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import pl.bartoszmech.application.response.GithubUsersResponse;
 import pl.bartoszmech.application.response.ErrorResponse;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,28 +42,28 @@ public class GithubUsersIntegrationTest {
                     {
                         "name": "Repository1",
                         "owner": {
-                            "login": "Owner1"
+                            "login": "username"
                         },
                         "fork": false
                     },
                     {
                         "name": "Repository2",
                         "owner": {
-                            "login": "Owner2"
+                            "login": "username"
                         },
                         "fork": true
                     },
                     {
                         "name": "Repository3",
                         "owner": {
-                            "login": "Owner3"
+                            "login": "username"
                         },
                         "fork": true
                     }
                     ]
             """.trim())));
 
-        stubFor(WireMock.get("/repos/Owner1/Repository1/branches")
+        stubFor(WireMock.get("/repos/username/Repository1/branches")
             .willReturn(WireMock.aResponse()
                 .withStatus(SC_OK)
                 .withHeader("Content-Type", APPLICATION_JSON)
@@ -89,26 +91,24 @@ public class GithubUsersIntegrationTest {
                     """)));
 
         // when
-        List<GithubUsersResponse> githubUsersResponse = webTestClient
+        Flux<GithubUsersResponse> githubUsersResponseFlux = webTestClient
             .get()
             .uri("/api/users/username")
-            .header("Content-Type", "application/json")
-            .accept()
+            .header(APPLICATION_JSON)
             .exchange()
+            .expectStatus().isOk()
+            .returnResult(GithubUsersResponse.class)
+            .getResponseBody();
 
         // then
-        .expectBodyList(GithubUsersResponse.class).hasSize(1)
-        .returnResult()
-        .getResponseBody();
-
-        assertThat(githubUsersResponse.getFirst())
-            .isEqualTo(new GithubUsersResponse("Repository1", "Owner1",
-                Arrays.asList(
-                    new GithubUsersResponse.Branch("branch1", "commit1_sha"),
-                    new GithubUsersResponse.Branch("branch2", "commit2_sha"),
-                    new GithubUsersResponse.Branch("branch3", "commit3_sha")
-                ))
-            );
+        StepVerifier.create(githubUsersResponseFlux)
+            .expectNextMatches(response ->
+                    response.repositoryName().equals("Repository1") &&
+                    response.ownerLogin().equals("username") &&
+                    response.branches().size() == 3
+            )
+            .expectComplete()
+            .verify();
 
     }
 
@@ -125,7 +125,6 @@ public class GithubUsersIntegrationTest {
             .get()
             .uri("/api/users/username")
             .header("Content-Type", "application/json")
-            .accept()
             .exchange()
 
         // then

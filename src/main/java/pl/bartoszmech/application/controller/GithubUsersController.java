@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.bartoszmech.application.response.GithubUsersResponse;
+import pl.bartoszmech.application.response.RepositoriesResponseAPI;
 import pl.bartoszmech.domain.GithubUsersService;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 
 @RestController
@@ -19,7 +19,7 @@ public class GithubUsersController {
     private final GithubUsersService githubUsersService;
 
     @GetMapping("/{username}")
-    public List<GithubUsersResponse> findAllRepositoriesByUsername(@PathVariable String username) {
+    public Flux<GithubUsersResponse> findAllRepositoriesByUsername(@PathVariable String username) {
         return githubUsersService.findAllRepositoriesByUsername(username);
     }
 

@@ -17,9 +17,8 @@ public class GithubUsersService {
     public IGithubClient client;
 
     public Flux<GithubUsersResponse> findAllRepositoriesByUsername(String username) {
-        Flux<RepositoriesResponseAPI> userRepositories = makeRequestForUserRepositories(username);
-        return userRepositories.flatMap(repo ->
-            mergeAPIResponse(username, repo.name(), makeRequestForRepositoryBranches(username, repo.name())));
+        return makeRequestForUserRepositories(username)
+            .flatMap(repo -> mergeAPIResponse(username, repo.name(), makeRequestForRepositoryBranches(username, repo.name())));
     }
 
     private Flux<RepositoriesResponseAPI> makeRequestForUserRepositories(String username) {

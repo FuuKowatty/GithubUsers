@@ -13,9 +13,6 @@ import pl.bartoszmech.application.response.ErrorResponse;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.common.ContentTypes.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;

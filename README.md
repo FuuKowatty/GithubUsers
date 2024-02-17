@@ -63,8 +63,8 @@ If your username will be valid, but it does not exist application will return yo
 - java - 21
 - Lombok - 1.18.30
 - Spring Boot - 3.2.1
-- Spring Boot Starter Web
 - Spring Boot Starter Webflux
 - Spring Boot Starter Test
 - WireMock - 3.3.1
 - AssertJ Core - 3.8.0
+- Reactor-Test
